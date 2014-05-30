@@ -57,10 +57,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	var __moduleName = "src/index";
-	var Window = __webpack_require__(2);
-	var Mouse = __webpack_require__(3);
-	var Keyboard = __webpack_require__(4);
-	var Touch = __webpack_require__(5);
+	var Window = __webpack_require__(2).default;
+	var Mouse = __webpack_require__(3).default;
+	var Keyboard = __webpack_require__(4).default;
+	var Touch = __webpack_require__(5).default;
 	var bacon = __webpack_require__(1);
 	bacon.Browser = {
 	  Window: Window,
