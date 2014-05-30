@@ -1,0 +1,23 @@
+{
+  "name": "bacon-browser",
+  "version": "0.0.0",
+  "authors": [
+    "Kat Marchán <kzm@sykosomatic.org>"
+  ],
+  "description": "Browser-specific utilities, EventStreams, and Properties for Bacon",
+  "main": "src/index.js",
+  "keywords": [
+    "bacon",
+    "baconjs",
+    "frp",
+    "reactive",
+    "browser",
+    "jquery"
+  ],
+  "license": "CC0",
+  "homepage": "https://github.com/zkat/bacon-browser",
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "bacon": "~0.7.13"
+  }
+}
