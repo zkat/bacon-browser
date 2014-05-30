@@ -1,7 +1,7 @@
-module Window from "./window";
-module Mouse from "./mouse";
-module Keyboard from "./keyboard";
-module Touch from "./touch";
+import Window from "./window";
+import Mouse from "./mouse";
+import Keyboard from "./keyboard";
+import Touch from "./touch";
 
 module bacon from "bacon";
 
