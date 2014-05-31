@@ -1,41 +1,47 @@
 module $ from "jquery";
 import "bacon";
 
-let Mouse = {
-  mousemove: domStream("mousemove"),
-  mouseup: domStream("mouseup"),
-  mousedown: domStream("mousedown"),
-  click: domStream("click"),
-  clicks: function(target) {
-    return Mouse.click(target).map(function(ev) {
+export var mousemove = domStream("mousemove");
+
+export var mouseup = domStream("mouseup");
+
+export var mousedown = domStream("mousedown");
+
+export var click = domStream("click");
+
+export var clicks = function(target) {
+  return click(target).map(function(ev) {
+    return {
+      x: target ? ev.offsetX : ev.pageX,
+      y: target ? ev.offsetY : ev.pageY
+    };
+  });
+};
+
+export var deltas = function(target) {
+  return position(target).diff(null, function(a, b) {
+    return a ? {x: b.x - a.x, y: b.y - a.y} : {x: 0, y: 0};
+  }).toEventStream();
+};
+
+export var position = function(target) {
+  return mousemove(target)
+    .map(function(ev) {
       return {
         x: target ? ev.offsetX : ev.pageX,
         y: target ? ev.offsetY : ev.pageY
       };
-    });
-  },
-  deltas: function(target) {
-    return Mouse.position(target).diff(null, function(a, b) {
-      return a ? {x: b.x - a.x, y: b.y - a.y} : {x: 0, y: 0};
-    }).toEventStream();
-  },
-  position: function(target) {
-    return Mouse.mousemove(target)
-      .map(function(ev) {
-        return {
-          x: target ? ev.offsetX : ev.pageX,
-          y: target ? ev.offsetY : ev.pageY
-        };
-      }).toProperty();
-  },
-  isUp: function(upTarget, downTarget) {
-    return Mouse.mouseup(upTarget).map(true)
-      .merge(Mouse.mousedown(downTarget).map(false))
-      .toProperty();
-  },
-  isDown: function(downTarget, upTarget) {
-    return Mouse.isUp(upTarget, downTarget).not();
-  }
+    }).toProperty();
+};
+
+export var isUp = function(upTarget, downTarget) {
+  return mouseup(upTarget).map(true)
+    .merge(mousedown(downTarget).map(false))
+    .toProperty();
+};
+
+export var isDown = function(downTarget, upTarget) {
+  return isUp(upTarget, downTarget).not();
 };
 
 function domStream(name) {
@@ -44,5 +50,3 @@ function domStream(name) {
     return target ? $(target).asEventStream(name) : docStream;
   };
 }
-
-export default Mouse;
