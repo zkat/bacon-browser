@@ -16,35 +16,21 @@ module.exports = function(grunt) {
       options: {
         watch: true,
         output: {
-          library: "bacon-browser",
           libraryTarget: "umd",
           path: __dirname + "/dist/",
           filename: "[name].js"
         },
         externals: {
-          jquery: "var jQuery",
-          bacon: "var Bacon"
-        },
-        resolve: {
-          alias: {
-            "jquery": "jquery/dist/jquery.js",
-            "bacon": "baconjs/dist/Bacon.js"
-          }
+          jquery: "umd jQuery",
+          bacon: "umd Bacon"
         },
         devtool: "#sourcemap",
         module: {
-          noParse: /node_modules\/jquery/,
           loaders: [{
             test: /\.js$/,
             loader: "transform/cacheable?es6ify"
           }]
         }
-      },
-      full: {entry: {"bacon-browser.full": "./src/index.js"}, externals: null},
-      fullMin: {
-        externals: null,
-        entry: {"bacon-browser.full.min": "./src/index.js"},
-        plugins: [new webpack.optimize.UglifyJsPlugin({compressor:{warnings:false}})]
       },
       lib: {entry: {"bacon-browser": "./src/index.js"}},
       libMin: {
@@ -56,8 +42,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask("default", ["test", "build"]);
   grunt.registerTask("test", ["mochaTest:test"]);
-  grunt.registerTask("build", ["webpack:lib", "webpack:libMin",
-                               "webpack:full", "webpack:fullMin"]);
+  grunt.registerTask("build", ["webpack:lib", "webpack:libMin"]);
   grunt.registerTask("dev", ["webpack:lib:keepalive"]);
   grunt.registerTask("update-build", "Commits the built version", function() {
     exec([
