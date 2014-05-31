@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
   var webpack = require("webpack"),
       sh = require("execSync");
+  require("es6ify").traceurOverrides = {blockBinding: true};
   grunt.loadNpmTasks("grunt-webpack");
   grunt.loadNpmTasks("grunt-mocha-test");
   grunt.initConfig({
