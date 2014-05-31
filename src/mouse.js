@@ -1,14 +1,7 @@
 module $ from "jquery";
 import "bacon";
 
-// TODO - abstraction over touch, wheel
-function domStream(name) {
-  return function(target) {
-    return $(target||document).asEventStream(name);
-  };
-}
-
-var Mouse = {
+let Mouse = {
   mousemove: domStream("mousemove"),
   mouseup: domStream("mouseup"),
   mousedown: domStream("mousedown"),
@@ -44,5 +37,12 @@ var Mouse = {
     return Mouse.isUp(upTarget, downTarget).not();
   }
 };
+
+function domStream(name) {
+  let docStream = $(document).asEventStream(name);
+  return function(target) {
+    return target ? $(target).asEventStream(name) : docStream;
+  };
+}
 
 export default Mouse;
