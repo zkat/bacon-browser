@@ -1,5 +1,5 @@
 module $ from "jquery";
 
-var Touch = {};
+let Touch = {};
 
 export default Touch;

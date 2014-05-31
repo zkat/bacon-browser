@@ -2,6 +2,6 @@ module $ from "jquery";
 import "bacon";
 
 // TODO - abstraction over key input
-var Keyboard = {};
+let Keyboard = {};
 
 export default Keyboard;
