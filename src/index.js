@@ -1,8 +1,8 @@
-import Window from "./window";
-import Mouse from "./mouse";
-import Keyboard from "./keyboard";
-import Touch from "./touch";
-import Gamepad from "./gamepad";
+module Window from "./window";
+module Mouse from "./mouse";
+module Keyboard from "./keyboard";
+module Touch from "./touch";
+module Gamepad from "./gamepad";
 
 module bacon from "bacon";
 

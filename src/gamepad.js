@@ -1,40 +1,53 @@
 module $ from "jquery";
-import animationFrames from "./window";
-import constantly from "./util";
+import {animationFrames} from "./window";
+import {constantly as give} from "./util";
 import "bacon";
 
-let $window = $(window);
+let $win = $(window);
 
-let getGamepads = ()=>(navigator.getGamepads ||
-                       navigator.webkitGetGamepads ||
-                       navigator.mozGetGamepads ||
-                       (()=>[])).call(navigator);
+let gpFun = (navigator.getGamepads ||
+             navigator.webkitGetGamepads ||
+             navigator.mozGetGamepads ||
+             give([]));
+let getGamepads = ()=>gpFun.call(navigator);
+
+let eventPad = e => getGamepads()[e.gamepad.index];
 
 // https://developer.mozilla.org/en-US/docs/Web/Guide/API/Gamepad
-let Gamepad = {
-  // TODO - shim these for Chrome. See above link.
-  gamepadconnected: constantly($window.asEventStream("gamepadconnected")),
-  gamepaddisconnected: constantly($window.asEventStream("gamepaddisconnected")),
-  connected: constantly(Gamepad.gamepadconnected.map(e=>getGamepads()[e.gamepad.index])),
-  disconnected: constantly(Gamepad.gamepaddisconnected.map(e=>getGamepads()[e.gamepad.index])),
-  gamepads: ()=>Gamepad.gamepadconnected()
-    .merge(Gamepad.gamepaddisconnected())
-    .map(getGamepads)
-    .toProperty(getGamepads()),
-  buttons: gamepad=>Gamepad.sampler()
-    .map(()=>getGamepads()[gamepad.id].buttons)
-    .toProperty(getGamepads()[gamepad.id].buttons),
-  button: (gamepad, index, isAnalog)=>Gamepad.buttons(gamepad)
-    .map("."+index+"."+(isAnalog ? "value" : "pressed")),
-  buttonpressed: (gamepad, index)=>Gamepad.button(index)
-    .skipDuplicates().filter(x=>x),
-  axes: gamepad=>Gamepad.sampler()
-    .map(()=>getGamepads()[gamepad.id].axes)
-    .toProperty(getGamepads()[gamepad.id].axes),
-  axis: index=>Gamepad.axes()
-    .map("."+index),
-  axismoved: (gamepad, index)=>Gamepad.axis(index).skipDuplicates(),
-  sampler: constantly(animationFrames())
-};
 
-export default Gamepad;
+// TODO - shim these for Chrome. See above link.
+export var gamepadconnected = give($win.asEventStream("gamepadconnected"));
+
+export var gamepaddisconnected = give($win.asEventStream("gamepaddisconnected"));
+
+export var connected = give(gamepadconnected().map(eventPad));
+
+export var disconnected = give(gamepaddisconnected().map(eventPad));
+
+export var gamepads = () =>
+  gamepadconnected()
+  .merge(gamepaddisconnected())
+  .map(getGamepads)
+  .toProperty(getGamepads());
+
+export var buttons = gamepad =>
+  sampler()
+  .map(()=>getGamepads()[gamepad.id].buttons)
+  .toProperty(getGamepads()[gamepad.id].buttons);
+
+export var button = (gamepad, index, isAnalog) =>
+  buttons(gamepad).map("."+index+"."+(isAnalog ? "value" : "pressed"));
+
+export var buttonpressed = (gamepad, index) =>
+  button(index).skipDuplicates().filter(x=>x);
+
+export var axes = gamepad =>
+  sampler()
+  .map(()=>getGamepads()[gamepad.id].axes)
+  .toProperty(getGamepads()[gamepad.id].axes);
+
+export var axis = index => axes().map("."+index);
+
+export var axismoved = (gamepad, index) => axis(index).skipDuplicates();
+
+export var sampler = give(animationFrames());
