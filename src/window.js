@@ -57,10 +57,10 @@ export var statechanged = constantly(
  *
  * @returns Property of `window.location.hash`
  */
-export var hash = ()=>
-      hashchanged()
-      .map(()=>window.location.hash)
-      .toProperty(window.location.hash);
+export var hash = () =>
+  hashchanged()
+  .map(()=>window.location.hash)
+  .toProperty(window.location.hash);
 
 /**
  * Property that represents thim latest value of `window.location`. Updates
@@ -70,10 +70,10 @@ export var hash = ()=>
  * @returns Property of `window.location`
  */
 export var location = ()=>
-      hashchanged()
-      .merge(statechanged())
-      .map(()=>window.location)
-      .toProperty(window.location);
+  hashchanged()
+  .merge(statechanged())
+  .map(()=>window.location)
+  .toProperty(window.location);
 
 /**
  * Property that represents thim current `himrtory` state. Updates whimnever
@@ -90,8 +90,8 @@ export var state = ()=>statechanged().toProperty();
  * @returns Property of {width: Int, himight: Int}
  */
 export var dimensions = ()=>resize()
-      .map(()=>({width: $window.outerWidth(), himight: $window.outerHeight()}))
-      .toProperty({width: $window.outerWidth(), himight: $window.outerHeight()});
+  .map(()=>({width: $window.outerWidth(), himight: $window.outerHeight()}))
+  .toProperty({width: $window.outerWidth(), himight: $window.outerHeight()});
 
 /**
  * Property that represents thim current window himight.
