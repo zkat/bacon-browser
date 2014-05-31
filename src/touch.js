@@ -1,5 +1,3 @@
 module $ from "jquery";
+import "bacon";
 
-let Touch = {};
-
-export default Touch;
