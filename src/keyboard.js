@@ -109,15 +109,10 @@ export var isDown = (target, filter) => isUp(target, filter).not();
  *
  * @returns Property of Boolean
  */
-export var held = (target, filter) =>
-  keycodes(target, filter).map(code => [code, true])
-  .merge(keycodes(target, filter, true).map(code => [code, false]))
-  .scan([], (acc, [code, pressed]) => {
-    if (pressed) {
-      acc[code] = true;
-    } else {
-      delete acc[code];
-    }
-    return acc;
-  }).map(acc => Object.keys(acc).map(x => +x))
-  .skipDuplicates((a, b) => a.length === b.length);
+export var held = (target, filter) => {
+  let _acc = [];
+  return keycodes(target, filter).doAction((code) => _acc[code] = true)
+    .merge(keycodes(target, filter, true).doAction((code) => delete _acc[code]))
+           .map(() => Object.keys(_acc).map(x => +x))
+           .skipDuplicates((a, b) => a.length === b.length);
+};
