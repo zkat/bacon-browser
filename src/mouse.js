@@ -16,6 +16,10 @@ var mousedown = domStream("mousedown");
 var mouseenter = domStream("mouseenter");
 var mouseleave = domStream("mouseleave");
 
+/*
+ * EventStream
+ */
+
 /**
  * Creates an event stream that returns a boolean whenever the mouse enters or
  * leaves the target.
@@ -27,18 +31,6 @@ var mouseleave = domStream("mouseleave");
  */
 export var hover = target =>
   mouseenter(target).map(true).merge(mouseleave(target).map(false));
-
-/**
- * Creates a property that is true if the mouse is currently hovering over
- * `target`. This is simply the Property version of `Mouse.hover()`.
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. This
- * can be anything `$()` accepts.
- *
- * @returns Property of Boolean
- */
-export var hovering = target =>
-  hover(target).toProperty();
 
 /**
  * Creates an EventStream of coordinates where clicks have occurred. If the
@@ -75,6 +67,22 @@ export var deltas = target =>
   position(target).diff(null, (a, b) =>
     a ? {x: b.x - a.x, y: b.y - a.y} : {x: 0, y: 0})
   .toEventStream();
+
+/*
+ * Property
+ */
+
+/**
+ * Creates a property that is true if the mouse is currently hovering over
+ * `target`. This is simply the Property version of `Mouse.hover()`.
+ *
+ * @param {EventTarget} [target=document] - Target to watch for events on. This
+ * can be anything `$()` accepts.
+ *
+ * @returns Property of Boolean
+ */
+export var hovering = target =>
+  hover(target).toProperty();
 
 /**
  * Creates a Property representing the current mouse position. If the
