@@ -4,6 +4,7 @@ import {constantly} from "./util";
 
 let $window = $(window);
 
+// Sort of cribbed from CanJS :)
 if (window.history && window.history.pushState) {
   let oldMethods = {};
   ["pushState", "replaceState"].forEach(function(method) {
@@ -24,6 +25,10 @@ var resize = constantly($window.asEventStream("resize"));
 var hashchanged = constantly($window.asEventStream("hashchanged"));
 var popstate = constantly($window.asEventStream("popstate"));
 
+/*
+ * EventStream
+ */
+
 /**
  * Special event that fires whenever the current history state is set, whether
  * from `history.pushState`, `history.replaceState`, or by anything that
@@ -34,62 +39,6 @@ var popstate = constantly($window.asEventStream("popstate"));
 export var statechanged = constantly(
   $window.asEventStream("___bacon-browser-state___",(_,s) => s)
     .merge(popstate().map(".originalEvent.state")));
-
-/**
- * Property that represents the latest value of `window.location.hash`. Updates
- * on `window.onhashchanged`.
- *
- * @returns Property of `window.location.hash`
- */
-export var hash = () =>
-  hashchanged()
-  .map(()=>window.location.hash)
-  .toProperty(window.location.hash);
-
-/**
- * Property that represents the latest value of `window.location`. Updates
- * whenever the URL changes either from a `hashchanged` or using the `history`
- * API, if available.
- *
- * @returns Property of `window.location`
- */
-export var location = ()=>
-  hashchanged()
-  .merge(statechanged())
-  .map(()=>window.location)
-  .toProperty(window.location);
-
-/**
- * Property that represents the current `history` state. Updates whenever
- * `history.pushState` or `history.replaceState` are called, or when anything
- * triggers `window.onpopstate`.
- *
- * @returns Property of history state
- */
-export var state = ()=>statechanged().toProperty();
-
-/**
- * Property of the current `window` outer dimensions, in pixels.
- *
- * @returns Property of {width: Int, height: Int}
- */
-export var dimensions = ()=>resize()
-  .map(()=>({width: $window.outerWidth(), height: $window.outerHeight()}))
-  .toProperty({width: $window.outerWidth(), height: $window.outerHeight()});
-
-/**
- * Property that represents the current window height.
- *
- * @returns Property of window's outer height
- */
-export var height = ()=>dimensions().map(".height");
-
-/**
- * Property that represents the current window width.
- *
- * @returns Property of window's outer width
- */
-export var width = ()=>dimensions().map(".width");
 
 /**
  * Event stream that fires whenever a browser animation frame is available. The
@@ -116,3 +65,59 @@ export var animationFrames = constantly(bacon.fromBinder(function(sink) {
     }
   };
 }));
+
+/*
+ * Property
+ */
+
+/**
+ * The latest value of `window.location`. Updates whenever the URL changes
+ * either from a `hashchanged` or using the `history` API, if available.
+ *
+ * @returns Property of `window.location`
+ */
+export var location = ()=>
+  hashchanged()
+  .merge(statechanged())
+  .map(()=>window.location)
+  .toProperty(window.location);
+
+/**
+ * The latest value of `window.location.hash`. Updates whenever the URL changes
+ * either from a `hashchanged` or using the `history` API, if available.
+ *
+ * @returns Property of `window.location.hash`
+ */
+export var hash = () => location().map(".hash");
+
+/**
+ * The current `history` state. Updates whenever `history.pushState` or
+ * `history.replaceState` are called, or when anything triggers
+ * `window.onpopstate`.
+ *
+ * @returns Property of history state
+ */
+export var state = () => statechanged().toProperty();
+
+/**
+ * The current `window` outer dimensions, in pixels.
+ *
+ * @returns Property of {width: Int, height: Int}
+ */
+export var dimensions = () => resize()
+  .map(()=>({width: $window.outerWidth(), height: $window.outerHeight()}))
+  .toProperty({width: $window.outerWidth(), height: $window.outerHeight()});
+
+/**
+ * The current window height.
+ *
+ * @returns Property of window's outer height
+ */
+export var height = ()=>dimensions().map(".height");
+
+/**
+ * The current window width.
+ *
+ * @returns Property of window's outer width
+ */
+export var width = ()=>dimensions().map(".width");
