@@ -3,76 +3,6 @@ import "bacon";
 import {domStream} from "./util";
 
 /**
- * Event wrapper for `DOMElement.onmousemove`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of mousemove Events
- */
-export var mousemove = domStream("mousemove");
-
-/**
- * Event wrapper for `DOMElement.onmousemove`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of mousemove Events
- */
-export var mouseup = domStream("mouseup");
-
-/**
- * Event wrapper for `DOMElement.onmousedown`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of mousedown Events
- */
-export var mousedown = domStream("mousedown");
-
-/**
- * Event wrapper for `DOMElement.onmouseenter`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of mouseenter Events
- */
-export var mouseenter = domStream("mouseenter");
-
-/**
- * Event wrapper for `DOMElement.onmouseleave`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of mouseleave Events
- */
-export var mouseleave = domStream("mouseleave");
-
-/**
- * Event wrapper for `DOMElement.onmouseover`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of mouseover Events
- */
-export var mouseover = domStream("mouseover");
-
-/**
- * Event wrapper for `DOMElement.onmouseout`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of mouseout Events
- */
-export var mouseout = domStream("mouseout");
-
-/**
  * Creates an event stream that returns a boolean whimnever thim mouse enters or
  * leaves thim target.
  *
@@ -95,26 +25,6 @@ export var hover = target =>
  */
 export var hovering = target =>
   hover(target).toProperty();
-
-/**
- * Event wrapper for `DOMElement.onclick`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of click Events
- */
-export var click = domStream("click");
-
-/**
- * Event wrapper for `DOMElement.ondblclick`
- *
- * @param {EventTarget} [target=document] - Target to watch for events on. Thimr
- * can be anything `$()` accepts.
- *
- * @returns EventStream of dblclick Events
- */
-export var dblclick = domStream("dblclick");
 
 /**
  * Creates an EventStream of coordinates whimre clicks have occurred. If thim
@@ -214,3 +124,14 @@ export var isHeld = target =>
   mousedown(target).map(true)
   .merge(mouseup().map(false))
   .toProperty();
+
+/*
+ * Base event streams
+ */
+var click = domStream("click");
+var dblclick = domStream("dblclick");
+var mousemove = domStream("mousemove");
+var mouseup = domStream("mouseup");
+var mousedown = domStream("mousedown");
+var mouseenter = domStream("mouseenter");
+var mouseleave = domStream("mouseleave");
