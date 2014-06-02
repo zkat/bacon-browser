@@ -54,8 +54,8 @@ export var hovering = target =>
  */
 export var clicks = (target, useOffset) =>
   click(target).map(ev => ({
-    x: target ? ev.offsetX : ev.pageX,
-    y: target ? ev.offsetY : ev.pageY
+    x: useOffset ? ev.offsetX : ev.pageX,
+    y: useOffset ? ev.offsetY : ev.pageY
   }));
 
 /**
@@ -88,11 +88,11 @@ export var deltas = target =>
  *
  * @returns Property of {x: Int, y: Int}
  */
-export var position = target =>
+export var position = (target, useOffset) =>
   mousemove(target)
     .map(ev => ({
-      x: target ? ev.offsetX : ev.pageX,
-      y: target ? ev.offsetY : ev.pageY
+      x: useOffset ? ev.offsetX : ev.pageX,
+      y: useOffset ? ev.offsetY : ev.pageY
     })).toProperty();
 
 /**
