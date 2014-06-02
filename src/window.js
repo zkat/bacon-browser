@@ -17,6 +17,13 @@ if (window.history && window.history.pushState) {
   });
 }
 
+/*
+ * Base event streams
+ */
+var resize = constantly($window.asEventStream("resize"));
+var hashchanged = constantly($window.asEventStream("hashchanged"));
+var popstate = constantly($window.asEventStream("popstate"));
+
 /**
  * Special event that fires whenever the current history state is set, whether
  * from `history.pushState`, `history.replaceState`, or by anything that
@@ -109,10 +116,3 @@ export var animationFrames = constantly(bacon.fromBinder(function(sink) {
     }
   };
 }));
-
-/*
- * Base event streams
- */
-var resize = constantly($window.asEventStream("resize"));
-var hashchanged = constantly($window.asEventStream("hashchanged"));
-var popstate = constantly($window.asEventStream("popstate"));

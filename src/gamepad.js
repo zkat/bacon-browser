@@ -1,8 +1,16 @@
+/**
+ * @module Bacon.Browser.Gamepad
+ *
+ * Note: browser support for this is really not very good right now. YMMV
+ */
 module $ from "jquery";
 import {animationFrames} from "./window";
 import {constantly as give} from "./util";
 import "bacon";
 
+/*
+ * Util stuff
+ */
 let $win = $(window);
 let gpFun = (navigator.getGamepads ||
              navigator.webkitGetGamepads ||
@@ -10,6 +18,14 @@ let gpFun = (navigator.getGamepads ||
              give([]));
 let getGamepads = ()=>gpFun.call(navigator);
 let eventPad = e => getGamepads()[e.gamepad.index];
+
+/*
+ * Base event streams
+ */
+// https://developer.mozilla.org/en-US/docs/Web/Guide/API/Gamepad
+// TODO - shim these for Chrome. See above link.
+var gamepadconnected = give($win.asEventStream("gamepadconnected"));
+var gamepaddisconnected = give($win.asEventStream("gamepaddisconnected"));
 
 /**
  * Event stream returning gamepad objects whenever they're connected.
@@ -62,11 +78,3 @@ export var axis = index => axes().map("."+index);
 export var axismoved = (gamepad, index) => axis(index).skipDuplicates();
 
 export var sampler = give(animationFrames());
-
-// https://developer.mozilla.org/en-US/docs/Web/Guide/API/Gamepad
-// TODO - shim these for Chrome. See above link.
-/*
- * Base event streams
- */
-var gamepadconnected = give($win.asEventStream("gamepadconnected"));
-var gamepaddisconnected = give($win.asEventStream("gamepaddisconnected"));

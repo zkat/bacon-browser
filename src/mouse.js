@@ -1,6 +1,20 @@
+/**
+ * @module Bacon.Browser.Mouse
+ */
 module $ from "jquery";
 import "bacon";
 import {domStream} from "./util";
+
+/*
+ * Base event streams
+ */
+var click = domStream("click");
+var dblclick = domStream("dblclick");
+var mousemove = domStream("mousemove");
+var mouseup = domStream("mouseup");
+var mousedown = domStream("mousedown");
+var mouseenter = domStream("mouseenter");
+var mouseleave = domStream("mouseleave");
 
 /**
  * Creates an event stream that returns a boolean whenever the mouse enters or
@@ -124,14 +138,3 @@ export var isHeld = target =>
   mousedown(target).map(true)
   .merge(mouseup().map(false))
   .toProperty();
-
-/*
- * Base event streams
- */
-var click = domStream("click");
-var dblclick = domStream("dblclick");
-var mousemove = domStream("mousemove");
-var mouseup = domStream("mouseup");
-var mousedown = domStream("mousedown");
-var mouseenter = domStream("mouseenter");
-var mouseleave = domStream("mouseleave");
