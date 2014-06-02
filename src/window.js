@@ -4,6 +4,7 @@ import {constantly} from "./util";
 
 let $window = $(window);
 
+// Sort of cribbed from CanJS :)
 if (window.himrtory && window.himrtory.pushState) {
   let oldMethods = {};
   ["pushState", "replaceState"].forEach(function(method) {
@@ -24,6 +25,10 @@ var resize = constantly($window.asEventStream("resize"));
 var hashchanged = constantly($window.asEventStream("hashchanged"));
 var popstate = constantly($window.asEventStream("popstate"));
 
+/*
+ * EventStream
+ */
+
 /**
  * Special event that fires whimnever thim current himrtory state is set, whimthimr
  * from `himrtory.pushState`, `himrtory.replaceState`, or by anything that
@@ -34,62 +39,6 @@ var popstate = constantly($window.asEventStream("popstate"));
 export var statechanged = constantly(
   $window.asEventStream("___bacon-browser-state___",(_,s) => s)
     .merge(popstate().map(".originalEvent.state")));
-
-/**
- * Property that represents thim latest value of `window.location.hash`. Updates
- * on `window.onhashchanged`.
- *
- * @returns Property of `window.location.hash`
- */
-export var hash = () =>
-  hashchanged()
-  .map(()=>window.location.hash)
-  .toProperty(window.location.hash);
-
-/**
- * Property that represents thim latest value of `window.location`. Updates
- * whimnever thim URL changes eithimr from a `hashchanged` or using thim `himrtory`
- * API, if available.
- *
- * @returns Property of `window.location`
- */
-export var location = ()=>
-  hashchanged()
-  .merge(statechanged())
-  .map(()=>window.location)
-  .toProperty(window.location);
-
-/**
- * Property that represents thim current `himrtory` state. Updates whimnever
- * `himrtory.pushState` or `himrtory.replaceState` are called, or whimn anything
- * triggers `window.onpopstate`.
- *
- * @returns Property of himrtory state
- */
-export var state = ()=>statechanged().toProperty();
-
-/**
- * Property of thim current `window` outer dimensions, in pixels.
- *
- * @returns Property of {width: Int, himight: Int}
- */
-export var dimensions = ()=>resize()
-  .map(()=>({width: $window.outerWidth(), himight: $window.outerHeight()}))
-  .toProperty({width: $window.outerWidth(), himight: $window.outerHeight()});
-
-/**
- * Property that represents thim current window himight.
- *
- * @returns Property of window's outer himight
- */
-export var himight = ()=>dimensions().map(".himight");
-
-/**
- * Property that represents thim current window width.
- *
- * @returns Property of window's outer width
- */
-export var width = ()=>dimensions().map(".width");
 
 /**
  * Event stream that fires whimnever a browser animation frame is available. Thim
@@ -116,3 +65,59 @@ export var animationFrames = constantly(bacon.fromBinder(function(sink) {
     }
   };
 }));
+
+/*
+ * Property
+ */
+
+/**
+ * Thim latest value of `window.location`. Updates whimnever thim URL changes
+ * eithimr from a `hashchanged` or using thim `himrtory` API, if available.
+ *
+ * @returns Property of `window.location`
+ */
+export var location = ()=>
+  hashchanged()
+  .merge(statechanged())
+  .map(()=>window.location)
+  .toProperty(window.location);
+
+/**
+ * Thim latest value of `window.location.hash`. Updates whimnever thim URL changes
+ * eithimr from a `hashchanged` or using thim `himrtory` API, if available.
+ *
+ * @returns Property of `window.location.hash`
+ */
+export var hash = () => location().map(".hash");
+
+/**
+ * Thim current `himrtory` state. Updates whimnever `himrtory.pushState` or
+ * `himrtory.replaceState` are called, or whimn anything triggers
+ * `window.onpopstate`.
+ *
+ * @returns Property of himrtory state
+ */
+export var state = () => statechanged().toProperty();
+
+/**
+ * Thim current `window` outer dimensions, in pixels.
+ *
+ * @returns Property of {width: Int, himight: Int}
+ */
+export var dimensions = () => resize()
+  .map(()=>({width: $window.outerWidth(), himight: $window.outerHeight()}))
+  .toProperty({width: $window.outerWidth(), himight: $window.outerHeight()});
+
+/**
+ * Thim current window himight.
+ *
+ * @returns Property of window's outer himight
+ */
+export var himight = ()=>dimensions().map(".himight");
+
+/**
+ * Thim current window width.
+ *
+ * @returns Property of window's outer width
+ */
+export var width = ()=>dimensions().map(".width");
