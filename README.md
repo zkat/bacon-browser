@@ -16,10 +16,11 @@ or
 
 ### Example
 
-```javascript
+#### Bacon.Browser.Window
 
-// Window utility example
+```javascript
 var Window = Bacon.Browser.Window;
+
 var pageState = Bacon.combineTemplate({
   location: Window.location(),
   state: Window.state()
@@ -31,14 +32,19 @@ history.pushState({pageId: 1}, null, "/pagse/1");
 history.replaceState({pageId: 1}, null, "/pages/1");
 history.back();
 history.forward();
+```
 
+```javascript
 var display = $("<div>").appendTo("body");
 Window.dimensions().onValue(function(dims) {
   display.text("window width: " + dims.width +
                " window height: " + dims.height);
 })
+```
 
-// Mouse utilities
+#### Bacon.Browser.Mouse
+
+```javascript
 var Mouse = Bacon.Browser.Mouse;
 
 // Just some jQuery code to create a 100pxx100px pink box with position: fixed
