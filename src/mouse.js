@@ -1,5 +1,6 @@
 module $ from "jquery";
 import "bacon";
+import {domStream} from "./util";
 
 /**
  * Event wrapper for `DOMElement.onmousemove`
@@ -213,8 +214,3 @@ export var isHeld = target =>
   mousedown(target).map(true)
   .merge(mouseup().map(false))
   .toProperty();
-
-function domStream(name) {
-  let docStream = $(document).asEventStream(name);
-  return target => target ? $(target).asEventStream(name) : docStream;
-}
