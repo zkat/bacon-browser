@@ -1,3 +1,8 @@
+/*
+ * @module Bacon.Browser
+ *
+ * Contains a variety of modules with high-level utilities.
+ */
 module Window from "./window";
 module Mouse from "./mouse";
 module Keyboard from "./keyboard";

@@ -2,6 +2,12 @@ module $ from "jquery";
 import "bacon";
 import {domStream} from "./util";
 
+/*
+ * Base event streams
+ */
+var keydown = domStream("keydown");
+var keyup = domStream("keyup");
+
 /**
  * Stream of keydown keycodes. This is intended for handling key input meant for
  * something other than text processing. (detecting Escape, arrow keys, etc.)
@@ -86,9 +92,3 @@ export var held = (target, filter) => {
            .map(() => Object.keys(_acc).map(x => +x))
            .skipDuplicates((a, b) => a.length === b.length);
 };
-
-/*
- * Base event streams
- */
-var keydown = domStream("keydown");
-var keyup = domStream("keyup");
