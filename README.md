@@ -91,3 +91,158 @@ more.
 -- it is a (usually small) wrapper on top of many of them providing
 higher-level, FRPish interaction. Use `jQuery#asEventStream`, provided by
 `Bacon` itself, for that.
+
+# Documentation
+
+`bacon-browser` plugs into the `Bacon` object, regardless of whether it's
+included through CommonJS, AMD, or as a global variable. It enriches the object
+with a new `Browser` module, with several other modules listed below it.
+
+All exported values under every modules are functions that return either
+`EventStream` or `Property` objects. While you should be able to treat all of
+them as if new streams or properties were created, it is not allowed to
+side-effect the return values of these functions, as they may be (and often are)
+cached.
+
+## Bacon.Browser.Window
+
+### EventStream
+
+#### `statechanged()`
+
+Special `EventStream` that fires whenever the current history state is set,
+whether from `history.pushState`, `history.replaceState`, or by anything that
+triggers `window.onpopstate`.
+
+#### `animationFrames()`
+
+Event stream that fires whenever a browser animation frame is available. The
+event value is a `DOMHighResTimeStamp` representing the time at which the frame
+became ready (which may be noticeable earlier than when the event is actually
+captured).
+
+### Property
+
+#### `location()`
+
+The latest value of `window.location`. Updates whenever the URL changes either
+from a `hashchanged` or using the `history` API, if available.
+
+#### `hash()`
+
+The latest value of `window.location.hash`. Updates whenever the URL changes
+either from a `hashchanged` or using the `history` API, if available.
+
+#### `state()`
+
+The current `history` state. Updates whenever `history.pushState` or
+`history.replaceState` are called, or when anything triggers
+`window.onpopstate`.
+
+#### `dimensions()`
+
+The current `window` outer dimensions, in pixels.
+
+#### `height()`
+
+The current window height.
+
+#### `width()`
+
+The current window width.
+
+## Bacon.Browser.Mouse
+
+### EventStream
+
+#### `hover([target=document])`
+
+Creates an event stream that returns a boolean whenever the mouse enters or
+leaves the target.
+
+#### `clicks([target=document [, useOffset=false]])`
+
+Creates an `EventStream` of coordinates where clicks have occurred. If the
+`useOffset` argument is given, the `click` events' `offsetX/offsetY` values are
+used, otherwise `pageX/pageY` are given.
+
+#### `deltas([target=document])`
+
+Creates an EventStream of mouse movement deltas, based on the preceding
+mousemove. The stream values represent the pixel x/y offsets.
+
+### Property
+
+#### `hovering([target=document])`
+
+`true` if the mouse is currently hovering over `target`, otherwise `false`. This
+is simply the `Property` version of `Mouse.hover()`.
+
+#### `position([target=document [, useOffset=false]])`
+
+The current mouse position as `{x: Int, y: Int}`. If the `useOffset` argument is
+given, the `mousemove` events' `offsetX/offsetY` values are used. Otherwise
+`pageX/pageY` are given.
+
+#### `isUp([target=document])`
+
+`true` if the mouse is currently up, otherwise `false`. If `target` is given,
+returns `true` only when the mouse is hovering over `target` without being held
+down.
+
+#### `isDown([target=document])`
+
+`true` if the mouse is currently down. If `target` is given, returns `true` only
+when the mouse is hovering over `target` while being held down.
+
+#### `isHeld([target=document])`
+
+`true` if the target is being "held" -- meaning, if the mouse was pressed on it,
+and it hasn't been released. The difference between this property and the one
+created by `Mouse.isDown()` is that `isDown()` will be `false` if the mouse
+leaves the `target`.
+
+This is usually the function you want for drag-and-drop behaviors.
+
+## Bacon.Browser.Keyboard
+
+### EventStream
+
+#### `keyCodes([target=document [, filter [, useKeyup]]])`
+
+Stream of `keydownEvent.keyCode`s. This is intended for handling key input meant
+for something other than text processing. (detecting `escape`, arrow keys, etc.)
+The `keyCode` values are normalized by `jQuery` for better cross-browser support.
+
+The `filter` argument will be used to filter which `keyCode`s will actually
+trigger the event. `filter` can be one of an integer matching the `keyCode`, an
+array of integers of the possible `keyCode`s, or a function which will receive
+the `keyCode` as an argument and accept it into the stream if a truthy value is
+returned.
+
+If `useKeyup` is truthy, `keyCodes()` will only fire on the `keyup` event,
+instead of the default `keydown`.
+
+### Property
+
+#### `isUp([target=document [, filter]])`
+
+`true` if a key is currently up and `target` is focused. If `filter` is
+provided, the property will toggle only when `filter` matches the event
+keyCode. See `Keyboard.keyCodes()` for information on `filter`.
+
+#### `isDown([target=document [, filter]])`
+
+`true` if a key is currently down and `target` is focused. If `filter` is
+provided, the property will toggle only when `filter` matches the event
+keyCode. See `Keyboard.keyCodes()` for information on `filter`.
+
+#### `isHeld([target=document [, filter]])`
+
+Alias for `Keyboard.isDown()`.
+
+#### `held([target=document [, filter]])`
+
+An array of the `keyCode`s currently held down, if `target` is in focus. If
+`filter` is provided, the property will toggle only when `filter` matches the
+event `keyCode`. See `Keyboard.keyCodes()` for information on `filter`.
