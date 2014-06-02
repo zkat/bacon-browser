@@ -110,15 +110,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	var statechanged = constantly($window.asEventStream("___bacon-browser-state___", (function(_, s) {
 	  return s;
 	})).merge(popstate().map(".originalEvent.state")));
-	var hash = (function() {
-	  return hashchanged().map((function() {
-	    return window.location.hash;
-	  })).toProperty(window.location.hash);
-	});
+	var animationFrames = constantly(bacon.fromBinder(function(sink) {
+	  var done = false,
+	      requestID;
+	  function request() {
+	    requestID = window.requestAnimationFrame(function(x) {
+	      sink(x);
+	      if (!done) {
+	        request();
+	      }
+	    });
+	  }
+	  request();
+	  return function stop() {
+	    done = true;
+	    if (requestID) {
+	      window.cancelAnimationFrame(requestID);
+	    }
+	  };
+	}));
 	var location = (function() {
 	  return hashchanged().merge(statechanged()).map((function() {
 	    return window.location;
 	  })).toProperty(window.location);
+	});
+	var hash = (function() {
+	  return location().map(".hash");
 	});
 	var state = (function() {
 	  return statechanged().toProperty();
@@ -140,43 +157,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	var width = (function() {
 	  return dimensions().map(".width");
 	});
-	var animationFrames = constantly(bacon.fromBinder(function(sink) {
-	  var done = false,
-	      requestID;
-	  function request() {
-	    requestID = window.requestAnimationFrame(function(x) {
-	      sink(x);
-	      if (!done) {
-	        request();
-	      }
-	    });
-	  }
-	  request();
-	  return function stop() {
-	    done = true;
-	    if (requestID) {
-	      window.cancelAnimationFrame(requestID);
-	    }
-	  };
-	}));
 	module.exports = {
-	  get resize() {
-	    return resize;
-	  },
-	  get hashchanged() {
-	    return hashchanged;
-	  },
-	  get popstate() {
-	    return popstate;
-	  },
 	  get statechanged() {
 	    return statechanged;
 	  },
-	  get hash() {
-	    return hash;
+	  get animationFrames() {
+	    return animationFrames;
 	  },
 	  get location() {
 	    return location;
+	  },
+	  get hash() {
+	    return hash;
 	  },
 	  get state() {
 	    return state;
@@ -189,9 +181,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  get width() {
 	    return width;
-	  },
-	  get animationFrames() {
-	    return animationFrames;
 	  },
 	  __esModule: true
 	};
@@ -206,15 +195,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	var __moduleName = "src/mouse";
 	var $ = __webpack_require__(7);
 	__webpack_require__(1);
+	var domStream = __webpack_require__(8).domStream;
+	var click = domStream("click");
+	var dblclick = domStream("dblclick");
 	var mousemove = domStream("mousemove");
 	var mouseup = domStream("mouseup");
 	var mousedown = domStream("mousedown");
-	var click = domStream("click");
-	var clicks = (function(target) {
+	var mouseenter = domStream("mouseenter");
+	var mouseleave = domStream("mouseleave");
+	var hover = (function(target) {
+	  return mouseenter(target).map(true).merge(mouseleave(target).map(false));
+	});
+	var clicks = (function(target, useOffset) {
 	  return click(target).map((function(ev) {
 	    return ({
-	      x: target ? ev.offsetX : ev.pageX,
-	      y: target ? ev.offsetY : ev.pageY
+	      x: useOffset ? ev.offsetX : ev.pageX,
+	      y: useOffset ? ev.offsetY : ev.pageY
 	    });
 	  }));
 	});
@@ -229,44 +225,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  })).toEventStream();
 	});
-	var position = (function(target) {
+	var hovering = (function(target) {
+	  return hover(target).toProperty();
+	});
+	var position = (function(target, useOffset) {
 	  return mousemove(target).map((function(ev) {
 	    return ({
-	      x: target ? ev.offsetX : ev.pageX,
-	      y: target ? ev.offsetY : ev.pageY
+	      x: useOffset ? ev.offsetX : ev.pageX,
+	      y: useOffset ? ev.offsetY : ev.pageY
 	    });
 	  })).toProperty();
 	});
-	var isUp = (function(upTarget, downTarget) {
-	  return mouseup(upTarget).map(true).merge(mousedown(downTarget).map(false)).toProperty();
+	var isUp = (function(target) {
+	  return isHeld().not().and(hovering(target));
 	});
-	var isDown = (function(downTarget, upTarget) {
-	  return isUp(upTarget, downTarget).not();
+	var isDown = (function(target) {
+	  return isHeld().and(hovering(target));
 	});
-	function domStream(name) {
-	  var docStream = $(document).asEventStream(name);
-	  return (function(target) {
-	    return target ? $(target).asEventStream(name) : docStream;
-	  });
-	}
+	var isHeld = (function(target) {
+	  return mousedown(target).map(true).merge(mouseup().map(false)).toProperty();
+	});
 	module.exports = {
-	  get mousemove() {
-	    return mousemove;
-	  },
-	  get mouseup() {
-	    return mouseup;
-	  },
-	  get mousedown() {
-	    return mousedown;
-	  },
-	  get click() {
-	    return click;
+	  get hover() {
+	    return hover;
 	  },
 	  get clicks() {
 	    return clicks;
 	  },
 	  get deltas() {
 	    return deltas;
+	  },
+	  get hovering() {
+	    return hovering;
 	  },
 	  get position() {
 	    return position;
@@ -276,6 +266,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  get isDown() {
 	    return isDown;
+	  },
+	  get isHeld() {
+	    return isHeld;
 	  },
 	  __esModule: true
 	};
@@ -290,6 +283,57 @@ return /******/ (function(modules) { // webpackBootstrap
 	var __moduleName = "src/keyboard";
 	var $ = __webpack_require__(7);
 	__webpack_require__(1);
+	var domStream = __webpack_require__(8).domStream;
+	var keydown = domStream("keydown");
+	var keyup = domStream("keyup");
+	var keyCodes = (function(target, filter, useKeyup) {
+	  return (useKeyup ? keyup : keydown)().map(".which").filter(!filter ? ((function(x) {
+	    return x;
+	  })) : typeof filter === "function" ? filter : typeof filter === "number" ? ((function(code) {
+	    return code === filter;
+	  })) : ((function(code) {
+	    return ~filter.indexOf(code);
+	  })));
+	});
+	var isUp = (function(target, filter) {
+	  return keyCodes(target, filter).map(false).merge(keyCodes(target, filter, true).map(true)).skipDuplicates().toProperty(true);
+	});
+	var isDown = (function(target, filter) {
+	  return isUp(target, filter).not();
+	});
+	var isHeld = isDown;
+	var held = (function(target, filter) {
+	  var _acc = [];
+	  return keyCodes(target, filter).doAction((function(code) {
+	    return _acc[code] = true;
+	  })).merge(keyCodes(target, filter, true).doAction((function(code) {
+	    return delete _acc[code];
+	  }))).map((function() {
+	    return Object.keys(_acc).map((function(x) {
+	      return +x;
+	    }));
+	  })).skipDuplicates((function(a, b) {
+	    return a.length === b.length;
+	  }));
+	});
+	module.exports = {
+	  get keyCodes() {
+	    return keyCodes;
+	  },
+	  get isUp() {
+	    return isUp;
+	  },
+	  get isDown() {
+	    return isDown;
+	  },
+	  get isHeld() {
+	    return isHeld;
+	  },
+	  get held() {
+	    return held;
+	  },
+	  __esModule: true
+	};
 	
 
 
@@ -355,12 +399,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	var sampler = give(animationFrames());
 	module.exports = {
-	  get gamepadconnected() {
-	    return gamepadconnected;
-	  },
-	  get gamepaddisconnected() {
-	    return gamepaddisconnected;
-	  },
 	  get connected() {
 	    return connected;
 	  },
@@ -408,14 +446,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	var __moduleName = "src/util";
+	var $ = __webpack_require__(7);
+	__webpack_require__(1);
 	function constantly(x) {
 	  return (function() {
 	    return x;
 	  });
 	}
+	function domStream(name) {
+	  var docStream = $(document).asEventStream(name);
+	  return (function(target) {
+	    return target ? $(target).asEventStream(name) : docStream;
+	  });
+	}
 	module.exports = {
 	  get constantly() {
 	    return constantly;
+	  },
+	  get domStream() {
+	    return domStream;
 	  },
 	  __esModule: true
 	};
