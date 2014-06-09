@@ -121,3 +121,37 @@ export var height = ()=>dimensions().map(".height");
  * @returns Property of window's outer width
  */
 export var width = ()=>dimensions().map(".width");
+
+/**
+ * The current scroll position of `target` (defaulting to `document`) in
+ * the form of an object with x and y properties.
+ *
+ * @param {EventTarget} [target=document] - Target to watch for events on. This
+ * can be anything `$()` accepts.
+ *
+ * @returns Property of `element`'s x and y scroll positions.
+ */
+export var scroll = (el=$(document)) =>
+  $(el).asEventStream("scroll")
+  .map(()=>({x: el.scrollLeft(), y: el.scrollTop()}))
+  .toProperty({x: el.scrollLeft(), y: el.scrollTop()});
+
+/**
+ * The horizontal scroll position for `target`.
+ *
+ * @param {EventTarget} [target=document] - Target to watch for events on. This
+ * can be anything `$()` accepts.
+ *
+ * @returns Property of `target`'s horizontal scroll position.
+ */
+export var scrollX = (el=$(document)) => scroll(el).map(".x");
+
+/**
+ * The vertical scroll position for `target`.
+ *
+ * @param {EventTarget} [target=document] - Target to watch for events on. This
+ * can be anything `$()` accepts.
+ *
+ * @returns Property of `target`'s vertical scroll position.
+ */
+export var scrollY = (el=$(document)) => scroll(el).map(".y");

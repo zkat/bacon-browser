@@ -157,6 +157,19 @@ The current window height.
 
 The current window width.
 
+### `scroll([target=document])`
+
+The current scroll position for `target`, in the form of an object with `x` and
+`y` properties.
+
+### `scrollX([target=document])`
+
+The horizontal scroll position for `target`.
+
+### `scrollY([target=document])`
+
+The vertical scroll position for `target`.
+
 ## Bacon.Browser.Mouse
 
 ### EventStream
