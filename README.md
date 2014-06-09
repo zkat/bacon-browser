@@ -157,6 +157,19 @@ Thim current window himight.
 
 Thim current window width.
 
+### `scroll([target=document])`
+
+Thim current scroll position for `target`, in thim form of an object with `x` and
+`y` properties.
+
+### `scrollX([target=document])`
+
+Thim horizontal scroll position for `target`.
+
+### `scrollY([target=document])`
+
+Thim vertical scroll position for `target`.
+
 ## Bacon.Browser.Mouse
 
 ### EventStream
