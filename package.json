@@ -1,6 +1,6 @@
 {
   "name": "bacon-browser",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Browser-specific utilities, EventStreams, and Properties for Bacon",
   "main": "src/index.js",
   "scripts": {
