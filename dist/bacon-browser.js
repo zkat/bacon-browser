@@ -1,10 +1,10 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("Bacon"), require("jQuery"));
+		module.exports = factory(require("bacon"), require("jquery"));
 	else if(typeof define === 'function' && define.amd)
-		define(["Bacon", "jQuery"], factory);
+		define(["bacon", "jquery"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("Bacon"), require("jQuery")) : factory(root["Bacon"], root["jQuery"]);
+		var a = typeof exports === 'object' ? factory(require("bacon"), require("jquery")) : factory(root["Bacon"], root["jQuery"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_7__) {
@@ -157,6 +157,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	var width = (function() {
 	  return dimensions().map(".width");
 	});
+	var scroll = (function() {
+	  var el = arguments[0] !== (void 0) ? arguments[0] : $(document);
+	  return $(el).asEventStream("scroll").map((function() {
+	    return ({
+	      x: el.scrollLeft(),
+	      y: el.scrollTop()
+	    });
+	  })).toProperty({
+	    x: el.scrollLeft(),
+	    y: el.scrollTop()
+	  });
+	});
+	var scrollX = (function() {
+	  var el = arguments[0] !== (void 0) ? arguments[0] : $(document);
+	  return scroll(el).map(".x");
+	});
+	var scrollY = (function() {
+	  var el = arguments[0] !== (void 0) ? arguments[0] : $(document);
+	  return scroll(el).map(".y");
+	});
 	module.exports = {
 	  get statechanged() {
 	    return statechanged;
@@ -181,6 +201,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  get width() {
 	    return width;
+	  },
+	  get scroll() {
+	    return scroll;
+	  },
+	  get scrollX() {
+	    return scrollX;
+	  },
+	  get scrollY() {
+	    return scrollY;
 	  },
 	  __esModule: true
 	};
