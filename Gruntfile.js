@@ -21,8 +21,18 @@ module.exports = function(grunt) {
           filename: "[name].js"
         },
         externals: {
-          jquery: "umd jQuery",
-          bacon: "umd Bacon"
+          jquery: {
+            "root": "jQuery",
+            "commonjs": "jquery",
+            "commonjs2": "jquery",
+            "amd": "jquery"
+          },
+          bacon: {
+            "root": "Bacon",
+            "commonjs": "bacon",
+            "commonjs2": "bacon",
+            "amd": "bacon"
+          }
         },
         devtool: "#sourcemap",
         module: {
